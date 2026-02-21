@@ -3,120 +3,157 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Shuvro's Apps & Resources</title>
+    <title>Shuvro's Mosaic</title>
     <style>
         :root {
-            --bg: #0f172a;
+            --bg: #020617;
             --card-bg: #1e293b;
             --text: #f8fafc;
             --accent: #38bdf8;
-            --muted: #94a3b8;
+            --muted: #64748b;
+            --finance: #10b981;
+            --tech: #6366f1;
+            --genai: #f59e0b;
         }
         body {
             font-family: 'Inter', system-ui, sans-serif;
             background-color: var(--bg);
             color: var(--text);
             margin: 0;
-            padding: 2rem;
+            padding: 1rem;
             display: flex;
             flex-direction: column;
-            align-items: center;
             min-height: 100vh;
         }
         header {
             text-align: center;
-            margin-bottom: 3rem;
+            margin: 1rem 0 2rem 0;
         }
         h1 {
-            font-size: 2.5rem;
-            margin-bottom: 0.5rem;
-            background: linear-gradient(to right, #38bdf8, #818cf8);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
+            font-size: 1.8rem;
+            margin: 0;
+            letter-spacing: -1px;
+            color: var(--accent);
         }
-        p { color: var(--muted); }
-        .container {
-            width: 100%;
-            max-width: 1000px;
+        .mosaic-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 1.5rem;
+            grid-template-columns: repeat(6, 1fr);
+            grid-auto-rows: 180px;
+            gap: 12px;
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
         }
-        .card {
+        .tile {
             background: var(--card-bg);
-            padding: 1.5rem;
-            border-radius: 12px;
+            padding: 1.2rem;
+            border-radius: 8px;
             border: 1px solid #334155;
-            transition: transform 0.2s, border-color 0.2s;
             text-decoration: none;
             color: inherit;
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            position: relative;
+            overflow: hidden;
         }
-        .card:hover {
-            transform: translateY(-4px);
+        .tile:hover {
+            transform: scale(1.02);
             border-color: var(--accent);
-            background: #253347;
+            z-index: 10;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
-        .card h3 {
-            margin: 0 0 0.75rem 0;
-            color: var(--accent);
-            display: flex;
-            align-items: center;
-            gap: 10px;
+        .topic {
+            font-size: 0.65rem;
+            text-transform: uppercase;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+            letter-spacing: 1px;
         }
-        .card p {
-            font-size: 0.95rem;
-            line-height: 1.5;
-            margin-bottom: 1.5rem;
+        .topic.finance { color: var(--finance); }
+        .topic.tech { color: var(--tech); }
+        .topic.gen-ai { color: var(--genai); }
+        
+        .tile h3 {
+            margin: 0 0 0.5rem 0;
+            font-size: 1rem;
+            line-height: 1.2;
         }
-        .badge {
-            font-size: 0.75rem;
-            background: #0ea5e920;
-            color: var(--accent);
-            padding: 4px 8px;
-            border-radius: 4px;
-            align-self: flex-start;
-        }
-        footer {
-            margin-top: auto;
-            padding-top: 3rem;
-            color: var(--muted);
+        .tile p {
             font-size: 0.8rem;
+            color: var(--muted);
+            margin: 0;
+            line-height: 1.4;
+            display: -webkit-box;
+            -webkit-line-clamp: 3;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
         }
+        /* Responsiveness for smaller screens */
+        @media (max-width: 1200px) { .mosaic-grid { grid-template-columns: repeat(4, 1fr); } }
+        @media (max-width: 800px) { .mosaic-grid { grid-template-columns: repeat(2, 1fr); } }
+        @media (max-width: 500px) { .mosaic-grid { grid-template-columns: 1fr; } }
     </style>
 </head>
 <body>
 
     <header>
-        <h1>Launchpad</h1>
-        <p>A collection of my web apps, tools, and resources.</p>
+        <h1>SHUVRO'S MOSAIC</h1>
     </header>
 
-    <div class="container">
-        <!-- App 1: Note Taker -->
-        <a href="notes-app/" class="card">
-            <div>
-                <h3>📝 Firebase Note Taker</h3>
-                <p>A real-time notepad that syncs across devices using Google Firebase. Simple, fast, and persistent.</p>
-            </div>
-            <span class="badge">Live App</span>
-        </a>
-
-        <!-- Placeholder for future apps -->
-        <div class="card" style="opacity: 0.6; cursor: default;">
-            <div>
-                <h3>🚀 Coming Soon</h3>
-                <p>More tools and experimental web UIs will be added here soon.</p>
-            </div>
-            <span class="badge" style="background: #334155; color: var(--muted);">Planned</span>
-        </div>
+    <div class="mosaic-grid" id="mosaic">
+        <!-- Tiles rendered by JS -->
     </div>
 
-    <footer>
-        &copy; 2026 Shuvro • Powered by OpenClaw
-    </footer>
+    <script>
+        const data = [
+            { title: "Note Taker", topic: "Tech", desc: "Real-time Firebase notepad for quick thoughts.", link: "notes-app/", category: "tech" },
+            { title: "OpenClaw Docs", topic: "Tech", desc: "Documentation for the AI agent framework.", link: "https://docs.openclaw.ai", category: "tech" },
+            { title: "Portfolio Tracker", topic: "Finance", desc: "Live view of market holdings and momentum.", link: "#", category: "finance" },
+            { title: "Gemini 1.5 Pro", topic: "Gen AI", desc: "Google's latest multi-modal large language model.", link: "https://aistudio.google.com", category: "gen-ai" },
+            { title: "Market Momentum", topic: "Finance", desc: "Sector analysis and relative strength reports.", link: "#", category: "finance" },
+            { title: "ClawHub", topic: "Gen AI", desc: "Community marketplace for AI agent skills.", link: "https://clawhub.com", category: "gen-ai" },
+            { title: "Local LLMs", topic: "Gen AI", desc: "Running models locally via Ollama and LM Studio.", link: "#", category: "gen-ai" },
+            { title: "Yield Curves", topic: "Finance", desc: "Monitoring Treasury spreads and macro indicators.", link: "#", category: "finance" },
+            { title: "Personal Wiki", topic: "Tech", desc: "Brain dump of all technical notes and snippets.", link: "#", category: "tech" },
+            { title: "GitHub Repo", topic: "Tech", desc: "Source code for this mosaic and other apps.", link: "https://github.com/sanimesa/apps", category: "tech" },
+            // Fillers to reach 24
+            { title: "Project X", topic: "Tech", desc: "Hidden experimental project.", link: "#", category: "tech" },
+            { title: "BTC Tracker", topic: "Finance", desc: "Live Bitcoin price and volatility dashboard.", link: "#", category: "finance" },
+            { title: "Agentic Workflows", topic: "Gen AI", desc: "Building multi-agent systems.", link: "#", category: "gen-ai" },
+            { title: "Options Flow", topic: "Finance", desc: "Unusual options activity monitor.", link: "#", category: "finance" },
+            { title: "Rust Learning", topic: "Tech", desc: "Notes on low-level memory safety.", link: "#", category: "tech" },
+            { title: "Stability AI", topic: "Gen AI", desc: "Image generation and diffusion models.", link: "#", category: "gen-ai" },
+            { title: "Fed Watch", topic: "Finance", desc: "Probability of rate hikes/cuts.", link: "#", category: "finance" },
+            { title: "VS Code Setup", topic: "Tech", desc: "Extensions and themes for productivity.", link: "#", category: "tech" },
+            { title: "Neural Networks", topic: "Gen AI", desc: "Deep learning fundamentals and math.", link: "#", category: "gen-ai" },
+            { title: "Macro Views", topic: "Finance", desc: "Global economic trends and forecasts.", link: "#", category: "finance" },
+            { title: "API Keys", topic: "Tech", desc: "Secure management of environment variables.", link: "#", category: "tech" },
+            { title: "Model Eval", topic: "Gen AI", desc: "Benchmarking different LLM versions.", link: "#", category: "gen-ai" },
+            { title: "Stock Alerts", topic: "Finance", desc: "Custom notification system for price targets.", link: "#", category: "finance" },
+            { title: "Shell Scripts", topic: "Tech", desc: "Automation routines for daily tasks.", link: "#", category: "tech" }
+        ];
 
+        function shuffle(array) {
+            for (let i = array.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [array[i], array[j]] = [array[j], array[i]];
+            }
+            return array;
+        }
+
+        const grid = document.getElementById('mosaic');
+        shuffle(data).forEach(item => {
+            const tile = document.createElement('a');
+            tile.href = item.link;
+            tile.className = 'tile';
+            tile.innerHTML = `
+                <div class="topic ${item.category}">${item.topic}</div>
+                <h3>${item.title}</h3>
+                <p>${item.desc}</p>
+            `;
+            grid.appendChild(tile);
+        });
+    </script>
 </body>
 </html>

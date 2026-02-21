@@ -1,3 +1,5 @@
-firebase-key.json
-.firebaserc
-firebase.json
+*
+!index.html
+!notes-app/
+!notes-app/**
+!.gitignore
