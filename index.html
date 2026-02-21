@@ -14,6 +14,7 @@
             --finance: #10b981;
             --tech: #6366f1;
             --genai: #f59e0b;
+            --social: #ef4444;
         }
         body {
             font-family: 'Inter', system-ui, sans-serif;
@@ -56,8 +57,20 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
+            background-size: cover;
+            background-position: center;
         }
-        /* Implemented tiles look active */
+        .tile::before {
+            content: "";
+            position: absolute;
+            top: 0; left: 0; right: 0; bottom: 0;
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(30, 41, 59, 0.95) 100%);
+            z-index: 1;
+        }
+        .tile * {
+            position: relative;
+            z-index: 2;
+        }
         .tile.implemented {
             opacity: 1;
             cursor: pointer;
@@ -68,7 +81,6 @@
             z-index: 10;
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
         }
-        /* Unimplemented tiles are ghosted/transparent */
         .tile.unimplemented {
             opacity: 0.25;
             cursor: default;
@@ -84,6 +96,7 @@
         .topic.finance { color: var(--finance); }
         .topic.tech { color: var(--tech); }
         .topic.gen-ai { color: var(--genai); }
+        .topic.social { color: var(--social); }
         
         .tile h3 {
             margin: 0 0 0.5rem 0;
@@ -96,7 +109,7 @@
             margin: 0;
             line-height: 1.4;
             display: -webkit-box;
-            -webkit-line-clamp: 3;
+            -webkit-line-clamp: 2;
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
@@ -109,26 +122,12 @@
             border-radius: 50%;
             background: var(--accent);
             display: none;
+            z-index: 3;
         }
         .implemented .status-dot {
             display: block;
             box-shadow: 0 0 8px var(--accent);
         }
-
-        /* Material Watchlist Styles */
-        .price-list {
-            margin-top: 5px;
-            font-size: 0.75rem;
-            display: flex;
-            flex-direction: column;
-            gap: 2px;
-        }
-        .price-item {
-            display: flex;
-            justify-content: space-between;
-            color: var(--text);
-        }
-
         @media (max-width: 1200px) { .mosaic-grid { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 800px) { .mosaic-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 500px) { .mosaic-grid { grid-template-columns: 1fr; } }
@@ -144,15 +143,25 @@
 
     <script>
         const data = [
-            { title: "Materials Watchlist", topic: "Finance", desc: "COPX, REMX, and sector peers.", link: "#", category: "finance", implemented: true, isWatchlist: true },
+            // Finance/Tech
+            { title: "Materials Watchlist", topic: "Finance", desc: "COPX, REMX, and sector peers.", link: "#", category: "finance", implemented: true },
             { title: "GitHub Repo", topic: "Tech", desc: "Source code for this mosaic.", link: "https://github.com/sanimesa/apps", category: "tech", implemented: true },
-            { title: "OpenClaw Docs", topic: "Tech", desc: "AI agent framework documentation.", link: "https://docs.openclaw.ai", category: "tech", implemented: true },
-            { title: "ClawHub", topic: "Gen AI", desc: "AI agent skills marketplace.", link: "https://clawhub.com", category: "gen-ai", implemented: true },
             
+            // YouTube Resources
+            { title: "Chip Stock Investor", topic: "Social", desc: "Semiconductor industry analysis.", link: "https://www.youtube.com/@ChipStockInvestor", category: "social", implemented: true, bg: "https://yt3.googleusercontent.com/uRto_lGv9l0G0B_P6V_C4uE6_7o5lR3-Tf4G0_8f-P_W_X_X_X_X_X_X=s176-c-k-c0x00ffffff-no-rj" },
+            { title: "Asianometry", topic: "Social", desc: "Deep dives on Asian tech & business history.", link: "https://www.youtube.com/@Asianometry", category: "social", implemented: true, bg: "https://yt3.googleusercontent.com/ytc/AIdro_n4_X_X_X_X_X_X_X_X_X_X_X_X=s176-c-k-c0x00ffffff-no-rj" },
+            { title: "Wall Street Millennial", topic: "Social", desc: "Modern business & finance stories.", link: "https://www.youtube.com/@WallStreetMillennial", category: "social", implemented: true, bg: "https://yt3.googleusercontent.com/ytc/AIdro_k4_X_X_X_X_X_X_X_X_X_X_X_X=s176-c-k-c0x00ffffff-no-rj" },
+            
+            // X Profiles
+            { title: "jukan05", topic: "Social", desc: "Macro & market insights on X.", link: "https://x.com/jukan05", category: "social", implemented: true },
+            { title: "michaeljburry", topic: "Social", desc: "The Big Short's Cassandra.", link: "https://x.com/michaeljburry", category: "social", implemented: true },
+
             // Unimplemented placeholders
-            { title: "Note Taker", topic: "Tech", desc: "Temporarily offline for security upgrades.", link: "#", category: "tech", implemented: false },
+            { title: "OpenClaw Docs", topic: "Tech", desc: "Agent framework docs.", link: "https://docs.openclaw.ai", category: "tech", implemented: true },
+            { title: "ClawHub", topic: "Gen AI", desc: "Skills marketplace.", link: "https://clawhub.com", category: "gen-ai", implemented: true },
+            { title: "Note Taker", topic: "Tech", desc: "Security upgrades in progress.", link: "#", category: "tech", implemented: false },
             { title: "Portfolio Tracker", topic: "Finance", desc: "Live view of market holdings.", link: "#", category: "finance", implemented: false },
-            { title: "Gemini 1.5 Pro", topic: "Gen AI", desc: "Google's multi-modal LLM interface.", link: "#", category: "gen-ai", implemented: false },
+            { title: "Gemini 1.5 Pro", topic: "Gen AI", desc: "Multi-modal LLM interface.", link: "#", category: "gen-ai", implemented: false },
             { title: "Market Momentum", topic: "Finance", desc: "Relative strength analysis.", link: "#", category: "finance", implemented: false },
             { title: "Yield Curves", topic: "Finance", desc: "Macro indicator monitoring.", link: "#", category: "finance", implemented: false },
             { title: "BTC Tracker", topic: "Finance", desc: "Bitcoin price dashboard.", link: "#", category: "finance", implemented: false },
@@ -166,10 +175,7 @@
             { title: "Neural Networks", topic: "Gen AI", desc: "Deep learning math.", link: "#", category: "gen-ai", implemented: false },
             { title: "Macro Views", topic: "Finance", desc: "Global economic trends.", link: "#", category: "finance", implemented: false },
             { title: "API Keys", topic: "Tech", desc: "Secure secret management.", link: "#", category: "tech", implemented: false },
-            { title: "Model Eval", topic: "Gen AI", desc: "LLM benchmarking.", link: "#", category: "gen-ai", implemented: false },
-            { title: "Stock Alerts", topic: "Finance", desc: "Custom price targets.", link: "#", category: "finance", implemented: false },
-            { title: "Shell Scripts", topic: "Tech", desc: "Automation routines.", link: "#", category: "tech", implemented: false },
-            { title: "Project X", topic: "Tech", desc: "Hidden experiment.", link: "#", category: "tech", implemented: false }
+            { title: "Model Eval", topic: "Gen AI", desc: "LLM benchmarking.", link: "#", category: "gen-ai", implemented: false }
         ];
 
         function shuffle(array) {
@@ -187,6 +193,7 @@
             if(item.implemented && item.link !== "#") tile.href = item.link;
             
             tile.className = `tile ${item.implemented ? 'implemented' : 'unimplemented'}`;
+            if (item.bg) tile.style.backgroundImage = `url('${item.bg}')`;
             
             let content = `
                 <div class="status-dot"></div>
@@ -194,17 +201,6 @@
                 <h3>${item.title}</h3>
                 <p>${item.desc}</p>
             `;
-
-            // Special handling for the Materials Watchlist
-            if (item.isWatchlist) {
-                content += `
-                    <div class="price-list">
-                        <div class="price-item"><span>COPX</span> <span style="color:var(--finance)">+1.2%</span></div>
-                        <div class="price-item"><span>REMX</span> <span style="color:#ef4444">-0.8%</span></div>
-                        <div class="price-item"><span>URA</span> <span style="color:var(--finance)">+2.4%</span></div>
-                    </div>
-                `;
-            }
 
             tile.innerHTML = content;
             grid.appendChild(tile);
