@@ -57,11 +57,22 @@
             position: relative;
             overflow: hidden;
         }
-        .tile:hover {
+        /* Implemented tiles look active */
+        .tile.implemented {
+            opacity: 1;
+            cursor: pointer;
+        }
+        .tile.implemented:hover {
             transform: scale(1.02);
             border-color: var(--accent);
             z-index: 10;
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
+        }
+        /* Unimplemented tiles are ghosted/transparent */
+        .tile.unimplemented {
+            opacity: 0.25;
+            cursor: default;
+            border-style: dashed;
         }
         .topic {
             font-size: 0.65rem;
@@ -89,7 +100,35 @@
             -webkit-box-orient: vertical;
             overflow: hidden;
         }
-        /* Responsiveness for smaller screens */
+        .status-dot {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            width: 6px;
+            height: 6px;
+            border-radius: 50%;
+            background: var(--accent);
+            display: none;
+        }
+        .implemented .status-dot {
+            display: block;
+            box-shadow: 0 0 8px var(--accent);
+        }
+
+        /* Material Watchlist Styles */
+        .price-list {
+            margin-top: 5px;
+            font-size: 0.75rem;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+        .price-item {
+            display: flex;
+            justify-content: space-between;
+            color: var(--text);
+        }
+
         @media (max-width: 1200px) { .mosaic-grid { grid-template-columns: repeat(4, 1fr); } }
         @media (max-width: 800px) { .mosaic-grid { grid-template-columns: repeat(2, 1fr); } }
         @media (max-width: 500px) { .mosaic-grid { grid-template-columns: 1fr; } }
@@ -101,36 +140,36 @@
         <h1>SHUVRO'S MOSAIC</h1>
     </header>
 
-    <div class="mosaic-grid" id="mosaic">
-        <!-- Tiles rendered by JS -->
-    </div>
+    <div class="mosaic-grid" id="mosaic"></div>
 
     <script>
         const data = [
-            { title: "OpenClaw Docs", topic: "Tech", desc: "Documentation for the AI agent framework.", link: "https://docs.openclaw.ai", category: "tech" },
-            { title: "Portfolio Tracker", topic: "Finance", desc: "Live view of market holdings and momentum.", link: "#", category: "finance" },
-            { title: "Gemini 1.5 Pro", topic: "Gen AI", desc: "Google's latest multi-modal large language model.", link: "https://aistudio.google.com", category: "gen-ai" },
-            { title: "Market Momentum", topic: "Finance", desc: "Sector analysis and relative strength reports.", link: "#", category: "finance" },
-            { title: "ClawHub", topic: "Gen AI", desc: "Community marketplace for AI agent skills.", link: "https://clawhub.com", category: "gen-ai" },
-            { title: "Local LLMs", topic: "Gen AI", desc: "Running models locally via Ollama and LM Studio.", link: "#", category: "gen-ai" },
-            { title: "Yield Curves", topic: "Finance", desc: "Monitoring Treasury spreads and macro indicators.", link: "#", category: "finance" },
-            { title: "Personal Wiki", topic: "Tech", desc: "Brain dump of all technical notes and snippets.", link: "#", category: "tech" },
-            { title: "GitHub Repo", topic: "Tech", desc: "Source code for this mosaic and other apps.", link: "https://github.com/sanimesa/apps", category: "tech" },
-            // Fillers to reach 24
-            { title: "Project X", topic: "Tech", desc: "Hidden experimental project.", link: "#", category: "tech" },
-            { title: "BTC Tracker", topic: "Finance", desc: "Live Bitcoin price and volatility dashboard.", link: "#", category: "finance" },
-            { title: "Agentic Workflows", topic: "Gen AI", desc: "Building multi-agent systems.", link: "#", category: "gen-ai" },
-            { title: "Options Flow", topic: "Finance", desc: "Unusual options activity monitor.", link: "#", category: "finance" },
-            { title: "Rust Learning", topic: "Tech", desc: "Notes on low-level memory safety.", link: "#", category: "tech" },
-            { title: "Stability AI", topic: "Gen AI", desc: "Image generation and diffusion models.", link: "#", category: "gen-ai" },
-            { title: "Fed Watch", topic: "Finance", desc: "Probability of rate hikes/cuts.", link: "#", category: "finance" },
-            { title: "VS Code Setup", topic: "Tech", desc: "Extensions and themes for productivity.", link: "#", category: "tech" },
-            { title: "Neural Networks", topic: "Gen AI", desc: "Deep learning fundamentals and math.", link: "#", category: "gen-ai" },
-            { title: "Macro Views", topic: "Finance", desc: "Global economic trends and forecasts.", link: "#", category: "finance" },
-            { title: "API Keys", topic: "Tech", desc: "Secure management of environment variables.", link: "#", category: "tech" },
-            { title: "Model Eval", topic: "Gen AI", desc: "Benchmarking different LLM versions.", link: "#", category: "gen-ai" },
-            { title: "Stock Alerts", topic: "Finance", desc: "Custom notification system for price targets.", link: "#", category: "finance" },
-            { title: "Shell Scripts", topic: "Tech", desc: "Automation routines for daily tasks.", link: "#", category: "tech" }
+            { title: "Materials Watchlist", topic: "Finance", desc: "COPX, REMX, and sector peers.", link: "#", category: "finance", implemented: true, isWatchlist: true },
+            { title: "GitHub Repo", topic: "Tech", desc: "Source code for this mosaic.", link: "https://github.com/sanimesa/apps", category: "tech", implemented: true },
+            { title: "OpenClaw Docs", topic: "Tech", desc: "AI agent framework documentation.", link: "https://docs.openclaw.ai", category: "tech", implemented: true },
+            { title: "ClawHub", topic: "Gen AI", desc: "AI agent skills marketplace.", link: "https://clawhub.com", category: "gen-ai", implemented: true },
+            
+            // Unimplemented placeholders
+            { title: "Note Taker", topic: "Tech", desc: "Temporarily offline for security upgrades.", link: "#", category: "tech", implemented: false },
+            { title: "Portfolio Tracker", topic: "Finance", desc: "Live view of market holdings.", link: "#", category: "finance", implemented: false },
+            { title: "Gemini 1.5 Pro", topic: "Gen AI", desc: "Google's multi-modal LLM interface.", link: "#", category: "gen-ai", implemented: false },
+            { title: "Market Momentum", topic: "Finance", desc: "Relative strength analysis.", link: "#", category: "finance", implemented: false },
+            { title: "Yield Curves", topic: "Finance", desc: "Macro indicator monitoring.", link: "#", category: "finance", implemented: false },
+            { title: "BTC Tracker", topic: "Finance", desc: "Bitcoin price dashboard.", link: "#", category: "finance", implemented: false },
+            { title: "Local LLMs", topic: "Gen AI", desc: "Notes on Ollama/LM Studio.", link: "#", category: "gen-ai", implemented: false },
+            { title: "Agentic Workflows", topic: "Gen AI", desc: "Multi-agent system design.", link: "#", category: "gen-ai", implemented: false },
+            { title: "Options Flow", topic: "Finance", desc: "Unusual activity monitor.", link: "#", category: "finance", implemented: false },
+            { title: "Rust Learning", topic: "Tech", desc: "Memory safety notes.", link: "#", category: "tech", implemented: false },
+            { title: "Stability AI", topic: "Gen AI", desc: "Image generation tools.", link: "#", category: "gen-ai", implemented: false },
+            { title: "Fed Watch", topic: "Finance", desc: "Rate hike probabilities.", link: "#", category: "finance", implemented: false },
+            { title: "VS Code Setup", topic: "Tech", desc: "Productivity extensions.", link: "#", category: "tech", implemented: false },
+            { title: "Neural Networks", topic: "Gen AI", desc: "Deep learning math.", link: "#", category: "gen-ai", implemented: false },
+            { title: "Macro Views", topic: "Finance", desc: "Global economic trends.", link: "#", category: "finance", implemented: false },
+            { title: "API Keys", topic: "Tech", desc: "Secure secret management.", link: "#", category: "tech", implemented: false },
+            { title: "Model Eval", topic: "Gen AI", desc: "LLM benchmarking.", link: "#", category: "gen-ai", implemented: false },
+            { title: "Stock Alerts", topic: "Finance", desc: "Custom price targets.", link: "#", category: "finance", implemented: false },
+            { title: "Shell Scripts", topic: "Tech", desc: "Automation routines.", link: "#", category: "tech", implemented: false },
+            { title: "Project X", topic: "Tech", desc: "Hidden experiment.", link: "#", category: "tech", implemented: false }
         ];
 
         function shuffle(array) {
@@ -142,15 +181,32 @@
         }
 
         const grid = document.getElementById('mosaic');
+        
         shuffle(data).forEach(item => {
-            const tile = document.createElement('a');
-            tile.href = item.link;
-            tile.className = 'tile';
-            tile.innerHTML = `
+            const tile = document.createElement(item.implemented ? 'a' : 'div');
+            if(item.implemented && item.link !== "#") tile.href = item.link;
+            
+            tile.className = `tile ${item.implemented ? 'implemented' : 'unimplemented'}`;
+            
+            let content = `
+                <div class="status-dot"></div>
                 <div class="topic ${item.category}">${item.topic}</div>
                 <h3>${item.title}</h3>
                 <p>${item.desc}</p>
             `;
+
+            // Special handling for the Materials Watchlist
+            if (item.isWatchlist) {
+                content += `
+                    <div class="price-list">
+                        <div class="price-item"><span>COPX</span> <span style="color:var(--finance)">+1.2%</span></div>
+                        <div class="price-item"><span>REMX</span> <span style="color:#ef4444">-0.8%</span></div>
+                        <div class="price-item"><span>URA</span> <span style="color:var(--finance)">+2.4%</span></div>
+                    </div>
+                `;
+            }
+
+            tile.innerHTML = content;
             grid.appendChild(tile);
         });
     </script>
