@@ -10,7 +10,7 @@
             --card-bg: #1e293b;
             --text: #f8fafc;
             --accent: #38bdf8;
-            --muted: #64748b;
+            --muted: #94a3b8;
             --finance: #10b981;
             --tech: #6366f1;
             --genai: #f59e0b;
@@ -47,7 +47,6 @@
         }
         .tile {
             background: var(--card-bg);
-            padding: 1.2rem;
             border-radius: 8px;
             border: 1px solid #334155;
             text-decoration: none;
@@ -57,26 +56,33 @@
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
             position: relative;
             overflow: hidden;
-            background-size: cover;
-            background-position: center;
         }
-        .tile::before {
-            content: "";
-            position: absolute;
-            top: 0; left: 0; right: 0; bottom: 0;
-            background: linear-gradient(180deg, rgba(30, 41, 59, 0.7) 0%, rgba(30, 41, 59, 0.95) 100%);
-            z-index: 1;
-        }
-        .tile * {
+        .tile-content {
+            padding: 1.2rem;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
             position: relative;
             z-index: 2;
+            background: linear-gradient(180deg, rgba(30, 41, 59, 0.4) 0%, rgba(15, 23, 42, 0.9) 100%);
+        }
+        .tile-bg {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-size: cover;
+            background-position: center;
+            z-index: 1;
+            transition: transform 0.5s ease;
+        }
+        .tile:hover .tile-bg {
+            transform: scale(1.1);
         }
         .tile.implemented {
             opacity: 1;
             cursor: pointer;
         }
         .tile.implemented:hover {
-            transform: scale(1.02);
+            transform: translateY(-4px);
             border-color: var(--accent);
             z-index: 10;
             box-shadow: 0 10px 20px rgba(0,0,0,0.5);
@@ -143,22 +149,21 @@
 
     <script>
         const data = [
-            // Finance/Tech
             { title: "Materials Watchlist", topic: "Finance", desc: "COPX, REMX, and sector peers.", link: "#", category: "finance", implemented: true },
             { title: "GitHub Repo", topic: "Tech", desc: "Source code for this mosaic.", link: "https://github.com/sanimesa/apps", category: "tech", implemented: true },
             
-            // YouTube Resources
-            { title: "Chip Stock Investor", topic: "Social", desc: "Semiconductor industry analysis.", link: "https://www.youtube.com/@ChipStockInvestor", category: "social", implemented: true, bg: "https://yt3.googleusercontent.com/uRto_lGv9l0G0B_P6V_C4uE6_7o5lR3-Tf4G0_8f-P_W_X_X_X_X_X_X=s176-c-k-c0x00ffffff-no-rj" },
-            { title: "Asianometry", topic: "Social", desc: "Deep dives on Asian tech & business history.", link: "https://www.youtube.com/@Asianometry", category: "social", implemented: true, bg: "https://yt3.googleusercontent.com/ytc/AIdro_n4_X_X_X_X_X_X_X_X_X_X_X_X=s176-c-k-c0x00ffffff-no-rj" },
-            { title: "Wall Street Millennial", topic: "Social", desc: "Modern business & finance stories.", link: "https://www.youtube.com/@WallStreetMillennial", category: "social", implemented: true, bg: "https://yt3.googleusercontent.com/ytc/AIdro_k4_X_X_X_X_X_X_X_X_X_X_X_X=s176-c-k-c0x00ffffff-no-rj" },
+            // YouTube Resources - Using un-redacted URLs
+            { title: "Chip Stock Investor", topic: "Social", desc: "Semiconductor industry analysis.", link: "https://www.youtube.com/@ChipStockInvestor", category: "social", implemented: true, bg: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80" },
+            { title: "Asianometry", topic: "Social", desc: "Deep dives on Asian tech & business history.", link: "https://www.youtube.com/@Asianometry", category: "social", implemented: true, bg: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=80" },
+            { title: "Wall Street Millennial", topic: "Social", desc: "Modern business & finance stories.", link: "https://www.youtube.com/@WallStreetMillennial", category: "social", implemented: true, bg: "https://images.unsplash.com/photo-1611974717482-4800b1ee2e24?auto=format&fit=crop&w=400&q=80" },
             
-            // X Profiles
             { title: "jukan05", topic: "Social", desc: "Macro & market insights on X.", link: "https://x.com/jukan05", category: "social", implemented: true },
             { title: "michaeljburry", topic: "Social", desc: "The Big Short's Cassandra.", link: "https://x.com/michaeljburry", category: "social", implemented: true },
 
-            // Unimplemented placeholders
             { title: "OpenClaw Docs", topic: "Tech", desc: "Agent framework docs.", link: "https://docs.openclaw.ai", category: "tech", implemented: true },
             { title: "ClawHub", topic: "Gen AI", desc: "Skills marketplace.", link: "https://clawhub.com", category: "gen-ai", implemented: true },
+            
+            // Placeholders
             { title: "Note Taker", topic: "Tech", desc: "Security upgrades in progress.", link: "#", category: "tech", implemented: false },
             { title: "Portfolio Tracker", topic: "Finance", desc: "Live view of market holdings.", link: "#", category: "finance", implemented: false },
             { title: "Gemini 1.5 Pro", topic: "Gen AI", desc: "Multi-modal LLM interface.", link: "#", category: "gen-ai", implemented: false },
@@ -174,8 +179,7 @@
             { title: "VS Code Setup", topic: "Tech", desc: "Productivity extensions.", link: "#", category: "tech", implemented: false },
             { title: "Neural Networks", topic: "Gen AI", desc: "Deep learning math.", link: "#", category: "gen-ai", implemented: false },
             { title: "Macro Views", topic: "Finance", desc: "Global economic trends.", link: "#", category: "finance", implemented: false },
-            { title: "API Keys", topic: "Tech", desc: "Secure secret management.", link: "#", category: "tech", implemented: false },
-            { title: "Model Eval", topic: "Gen AI", desc: "LLM benchmarking.", link: "#", category: "gen-ai", implemented: false }
+            { title: "API Keys", topic: "Tech", desc: "Secure secret management.", link: "#", category: "tech", implemented: false }
         ];
 
         function shuffle(array) {
@@ -193,16 +197,19 @@
             if(item.implemented && item.link !== "#") tile.href = item.link;
             
             tile.className = `tile ${item.implemented ? 'implemented' : 'unimplemented'}`;
-            if (item.bg) tile.style.backgroundImage = `url('${item.bg}')`;
             
-            let content = `
+            let bgStyle = item.bg ? `style="background-image: url('${item.bg}')"` : '';
+            
+            tile.innerHTML = `
+                <div class="tile-bg" ${bgStyle}></div>
                 <div class="status-dot"></div>
-                <div class="topic ${item.category}">${item.topic}</div>
-                <h3>${item.title}</h3>
-                <p>${item.desc}</p>
+                <div class="tile-content">
+                    <div class="topic ${item.category}">${item.topic}</div>
+                    <h3>${item.title}</h3>
+                    <p>${item.desc}</p>
+                </div>
             `;
 
-            tile.innerHTML = content;
             grid.appendChild(tile);
         });
     </script>
