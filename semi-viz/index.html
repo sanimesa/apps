@@ -3,50 +3,65 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Semi Equipment Analysis</title>
+    <title>Semi Equipment Industry Analysis</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- Plugin for labels on bubbles -->
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <style>
-        body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; margin: 0; padding: 2rem; }
-        .container { max-width: 1000px; margin: 0 auto; }
-        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
-        .back-btn { color: #0284c7; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
-        .chart-container { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; height: 600px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); position: relative; }
-        h1 { margin: 0; font-size: 1.5rem; color: #0f172a; font-weight: 800; }
-        .legend { margin-top: 1rem; font-size: 0.8rem; color: #64748b; text-align: center; }
+        body { font-family: 'Inter', system-ui, -apple-system, sans-serif; background: #f8fafc; color: #0f172a; margin: 0; padding: 2rem; line-height: 1.5; }
+        .container { max-width: 1100px; margin: 0 auto; }
+        header { margin-bottom: 2.5rem; border-bottom: 1px solid #e2e8f0; padding-bottom: 1.5rem; }
+        .header-top { display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; }
+        .back-btn { color: #0284c7; text-decoration: none; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 5px; }
+        .back-btn:hover { text-decoration: underline; }
+        h1 { margin: 0; font-size: 2rem; color: #0f172a; font-weight: 800; }
+        .description { color: #475569; max-width: 800px; font-size: 1.05rem; }
+        .chart-container { background: #ffffff; padding: 2rem; border-radius: 16px; border: 1px solid #e2e8f0; height: 650px; box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1); position: relative; margin-top: 1rem; }
+        .legend-box { margin-top: 1.5rem; padding: 1rem; background: #f1f5f9; border-radius: 8px; font-size: 0.85rem; color: #475569; display: flex; justify-content: center; gap: 2rem; }
+        .legend-item { display: flex; align-items: center; gap: 8px; }
+        .dot { width: 12px; height: 12px; border-radius: 50%; }
     </style>
 </head>
 <body>
     <div class="container">
         <header>
-            <h1>Semiconductor Equipment Mosaic</h1>
-            <a href="../" class="back-btn">← Back to Mosaic</a>
+            <div class="header-top">
+                <h1>Semiconductor Equipment Industry</h1>
+                <a href="../" class="back-btn">← Back to Mosaic</a>
+            </div>
+            <p class="description">
+                This visualization compares key players in the semiconductor manufacturing equipment sector. 
+                The <strong>X-axis</strong> represents the 1-year stock performance, the <strong>Y-axis</strong> shows projected annual growth rates, 
+                and the <strong>size of each bubble</strong> corresponds to the company's relative market capitalization. 
+                Use this to identify high-growth specialists versus established industry giants.
+            </p>
         </header>
 
         <div class="chart-container">
             <canvas id="bubbleChart"></canvas>
         </div>
-        <p class="legend">X-Axis: 1Y Return (%) | Y-Axis: Growth Rate (%) | Bubble Size: Market Cap</p>
+        
+        <div class="legend-box">
+            <div class="legend-item"><span class="dot" style="background:#4f46e5"></span> Large Cap (Lithography/Etch)</div>
+            <div class="legend-item"><span class="dot" style="background:#059669"></span> Mid Cap (Metrology/Test)</div>
+            <div class="legend-item"><span class="dot" style="background:#d97706"></span> High Growth Specialists</div>
+        </div>
     </div>
 
     <script>
-        // Register the datalabels plugin
         Chart.register(ChartDataLabels);
-
         const ctx = document.getElementById('bubbleChart').getContext('2d');
         
         const semiData = [
-            { label: 'ASML', data: [{ x: 15, y: 18, r: 45 }], backgroundColor: 'rgba(79, 70, 229, 0.7)' },
-            { label: 'AMAT', data: [{ x: 22, y: 12, r: 35 }], backgroundColor: 'rgba(2, 132, 199, 0.7)' },
-            { label: 'LRCX', data: [{ x: 18, y: 14, r: 30 }], backgroundColor: 'rgba(5, 150, 105, 0.7)' },
-            { label: 'KLAC', data: [{ x: 25, y: 15, r: 28 }], backgroundColor: 'rgba(217, 119, 6, 0.7)' },
-            { label: 'TER', data: [{ x: 8, y: 10, r: 15 }], backgroundColor: 'rgba(220, 38, 38, 0.7)' },
-            { label: 'ONTO', data: [{ x: 35, y: 22, r: 12 }], backgroundColor: 'rgba(219, 39, 119, 0.7)' },
-            { label: 'ACLS', data: [{ x: -5, y: 8, r: 10 }], backgroundColor: 'rgba(100, 116, 139, 0.7)' },
-            { label: 'CAMT', data: [{ x: 45, y: 25, r: 12 }], backgroundColor: 'rgba(139, 92, 246, 0.7)' },
-            { label: 'NVMI', data: [{ x: 30, y: 20, r: 11 }], backgroundColor: 'rgba(8, 145, 178, 0.7)' },
-            { label: 'ENTG', data: [{ x: 12, y: 9, r: 18 }], backgroundColor: 'rgba(234, 88, 12, 0.7)' }
+            { label: 'ASML', data: [{ x: 15, y: 18, r: 45 }], backgroundColor: 'rgba(79, 70, 229, 0.8)' },
+            { label: 'AMAT', data: [{ x: 22, y: 12, r: 38 }], backgroundColor: 'rgba(2, 132, 199, 0.8)' },
+            { label: 'LRCX', data: [{ x: 18, y: 14, r: 32 }], backgroundColor: 'rgba(5, 150, 105, 0.8)' },
+            { label: 'KLAC', data: [{ x: 25, y: 15, r: 30 }], backgroundColor: 'rgba(5, 150, 105, 0.8)' },
+            { label: 'TER', data: [{ x: 8, y: 10, r: 18 }], backgroundColor: 'rgba(220, 38, 38, 0.8)' },
+            { label: 'ONTO', data: [{ x: 35, y: 22, r: 15 }], backgroundColor: 'rgba(217, 119, 6, 0.8)' },
+            { label: 'ACLS', data: [{ x: -5, y: 8, r: 12 }], backgroundColor: 'rgba(100, 116, 139, 0.8)' },
+            { label: 'CAMT', data: [{ x: 45, y: 25, r: 14 }], backgroundColor: 'rgba(217, 119, 6, 0.8)' },
+            { label: 'NVMI', data: [{ x: 30, y: 20, r: 13 }], backgroundColor: 'rgba(217, 119, 6, 0.8)' },
+            { label: 'ENTG', data: [{ x: 12, y: 9, r: 20 }], backgroundColor: 'rgba(79, 70, 229, 0.8)' }
         ];
 
         new Chart(ctx, {
@@ -57,38 +72,42 @@
                 maintainAspectRatio: false,
                 scales: {
                     x: { 
-                        title: { display: true, text: '1 Year Return (%)', color: '#64748b', font: { weight: 'bold' } },
+                        title: { display: true, text: '1 Year Return (%)', color: '#64748b', font: { size: 14, weight: '600' } },
                         grid: { color: '#f1f5f9' },
-                        ticks: { color: '#64748b' }
+                        ticks: { color: '#64748b' },
+                        suggestedMin: -10,
+                        suggestedMax: 50
                     },
                     y: { 
-                        title: { display: true, text: 'Growth Rate (%)', color: '#64748b', font: { weight: 'bold' } },
+                        title: { display: true, text: 'Growth Rate (%)', color: '#64748b', font: { size: 14, weight: '600' } },
                         grid: { color: '#f1f5f9' },
-                        ticks: { color: '#64748b' }
+                        ticks: { color: '#64748b' },
+                        suggestedMin: 0,
+                        suggestedMax: 30
                     }
                 },
                 plugins: {
                     legend: { display: false },
                     tooltip: {
+                        backgroundColor: '#0f172a',
+                        titleFont: { size: 14 },
+                        bodyFont: { size: 13 },
+                        padding: 12,
                         callbacks: {
                             label: function(context) {
-                                return context.dataset.label + ': Return ' + context.raw.x + '%, Growth ' + context.raw.y + '%';
+                                return context.dataset.label + ': ' + context.raw.x + '% Return, ' + context.raw.y + '% Growth';
                             }
                         }
                     },
                     datalabels: {
                         color: '#ffffff',
-                        font: {
-                            weight: 'bold',
-                            size: 11
-                        },
+                        font: { weight: 'bold', size: 12 },
                         formatter: function(value, context) {
                             return context.dataset.label;
                         },
-                        display: function(context) {
-                            // Only show label if the bubble is large enough to be readable
-                            return context.dataset.data[0].r > 8; 
-                        }
+                        display: true,
+                        align: 'center',
+                        offset: 0
                     }
                 }
             }
