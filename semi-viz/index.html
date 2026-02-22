@@ -5,12 +5,14 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Semi Equipment Analysis</title>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Plugin for labels on bubbles -->
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.0.0"></script>
     <style>
         body { font-family: 'Inter', sans-serif; background: #f8fafc; color: #0f172a; margin: 0; padding: 2rem; }
         .container { max-width: 1000px; margin: 0 auto; }
         header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
         .back-btn { color: #0284c7; text-decoration: none; font-size: 0.9rem; font-weight: 600; }
-        .chart-container { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; height: 600px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); }
+        .chart-container { background: #ffffff; padding: 2rem; border-radius: 12px; border: 1px solid #e2e8f0; height: 600px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); position: relative; }
         h1 { margin: 0; font-size: 1.5rem; color: #0f172a; font-weight: 800; }
         .legend { margin-top: 1rem; font-size: 0.8rem; color: #64748b; text-align: center; }
     </style>
@@ -29,6 +31,9 @@
     </div>
 
     <script>
+        // Register the datalabels plugin
+        Chart.register(ChartDataLabels);
+
         const ctx = document.getElementById('bubbleChart').getContext('2d');
         
         const semiData = [
@@ -38,8 +43,8 @@
             { label: 'KLAC', data: [{ x: 25, y: 15, r: 28 }], backgroundColor: 'rgba(217, 119, 6, 0.7)' },
             { label: 'TER', data: [{ x: 8, y: 10, r: 15 }], backgroundColor: 'rgba(220, 38, 38, 0.7)' },
             { label: 'ONTO', data: [{ x: 35, y: 22, r: 12 }], backgroundColor: 'rgba(219, 39, 119, 0.7)' },
-            { label: 'ACLS', data: [{ x: -5, y: 8, r: 8 }], backgroundColor: 'rgba(100, 116, 139, 0.7)' },
-            { label: 'CAMT', data: [{ x: 45, y: 25, r: 10 }], backgroundColor: 'rgba(139, 92, 246, 0.7)' },
+            { label: 'ACLS', data: [{ x: -5, y: 8, r: 10 }], backgroundColor: 'rgba(100, 116, 139, 0.7)' },
+            { label: 'CAMT', data: [{ x: 45, y: 25, r: 12 }], backgroundColor: 'rgba(139, 92, 246, 0.7)' },
             { label: 'NVMI', data: [{ x: 30, y: 20, r: 11 }], backgroundColor: 'rgba(8, 145, 178, 0.7)' },
             { label: 'ENTG', data: [{ x: 12, y: 9, r: 18 }], backgroundColor: 'rgba(234, 88, 12, 0.7)' }
         ];
@@ -52,12 +57,12 @@
                 maintainAspectRatio: false,
                 scales: {
                     x: { 
-                        title: { display: true, text: '1 Year Return (%)', color: '#64748b' },
+                        title: { display: true, text: '1 Year Return (%)', color: '#64748b', font: { weight: 'bold' } },
                         grid: { color: '#f1f5f9' },
                         ticks: { color: '#64748b' }
                     },
                     y: { 
-                        title: { display: true, text: 'Growth Rate (%)', color: '#64748b' },
+                        title: { display: true, text: 'Growth Rate (%)', color: '#64748b', font: { weight: 'bold' } },
                         grid: { color: '#f1f5f9' },
                         ticks: { color: '#64748b' }
                     }
@@ -69,6 +74,20 @@
                             label: function(context) {
                                 return context.dataset.label + ': Return ' + context.raw.x + '%, Growth ' + context.raw.y + '%';
                             }
+                        }
+                    },
+                    datalabels: {
+                        color: '#ffffff',
+                        font: {
+                            weight: 'bold',
+                            size: 11
+                        },
+                        formatter: function(value, context) {
+                            return context.dataset.label;
+                        },
+                        display: function(context) {
+                            // Only show label if the bubble is large enough to be readable
+                            return context.dataset.data[0].r > 8; 
                         }
                     }
                 }
