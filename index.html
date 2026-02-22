@@ -149,21 +149,17 @@
 
     <script>
         const data = [
+            { title: "Semi Equipment Viz", topic: "Finance", desc: "Bubble chart for industry tickers.", link: "semi-viz/", category: "finance", implemented: true, bg: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80" },
             { title: "Materials Watchlist", topic: "Finance", desc: "COPX, REMX, and sector peers.", link: "#", category: "finance", implemented: true },
             { title: "GitHub Repo", topic: "Tech", desc: "Source code for this mosaic.", link: "https://github.com/sanimesa/apps", category: "tech", implemented: true },
-            
-            // YouTube Resources - Using un-redacted URLs
             { title: "Chip Stock Investor", topic: "Social", desc: "Semiconductor industry analysis.", link: "https://www.youtube.com/@ChipStockInvestor", category: "social", implemented: true, bg: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80" },
-            { title: "Asianometry", topic: "Social", desc: "Deep dives on Asian tech & business history.", link: "https://www.youtube.com/@Asianometry", category: "social", implemented: true, bg: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=80" },
+            { title: "Asianometry", topic: "Social", desc: "Deep dives on Asian tech history.", link: "https://www.youtube.com/@Asianometry", category: "social", implemented: true, bg: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=400&q=80" },
             { title: "Wall Street Millennial", topic: "Social", desc: "Modern business & finance stories.", link: "https://www.youtube.com/@WallStreetMillennial", category: "social", implemented: true, bg: "https://images.unsplash.com/photo-1611974717482-4800b1ee2e24?auto=format&fit=crop&w=400&q=80" },
-            
             { title: "jukan05", topic: "Social", desc: "Macro & market insights on X.", link: "https://x.com/jukan05", category: "social", implemented: true },
             { title: "michaeljburry", topic: "Social", desc: "The Big Short's Cassandra.", link: "https://x.com/michaeljburry", category: "social", implemented: true },
-
             { title: "OpenClaw Docs", topic: "Tech", desc: "Agent framework docs.", link: "https://docs.openclaw.ai", category: "tech", implemented: true },
             { title: "ClawHub", topic: "Gen AI", desc: "Skills marketplace.", link: "https://clawhub.com", category: "gen-ai", implemented: true },
             
-            // Placeholders
             { title: "Note Taker", topic: "Tech", desc: "Security upgrades in progress.", link: "#", category: "tech", implemented: false },
             { title: "Portfolio Tracker", topic: "Finance", desc: "Live view of market holdings.", link: "#", category: "finance", implemented: false },
             { title: "Gemini 1.5 Pro", topic: "Gen AI", desc: "Multi-modal LLM interface.", link: "#", category: "gen-ai", implemented: false },
@@ -177,9 +173,7 @@
             { title: "Stability AI", topic: "Gen AI", desc: "Image generation tools.", link: "#", category: "gen-ai", implemented: false },
             { title: "Fed Watch", topic: "Finance", desc: "Rate hike probabilities.", link: "#", category: "finance", implemented: false },
             { title: "VS Code Setup", topic: "Tech", desc: "Productivity extensions.", link: "#", category: "tech", implemented: false },
-            { title: "Neural Networks", topic: "Gen AI", desc: "Deep learning math.", link: "#", category: "gen-ai", implemented: false },
-            { title: "Macro Views", topic: "Finance", desc: "Global economic trends.", link: "#", category: "finance", implemented: false },
-            { title: "API Keys", topic: "Tech", desc: "Secure secret management.", link: "#", category: "tech", implemented: false }
+            { title: "Neural Networks", topic: "Gen AI", desc: "Deep learning math.", link: "#", category: "gen-ai", implemented: false }
         ];
 
         function shuffle(array) {
@@ -191,15 +185,11 @@
         }
 
         const grid = document.getElementById('mosaic');
-        
         shuffle(data).forEach(item => {
             const tile = document.createElement(item.implemented ? 'a' : 'div');
             if(item.implemented && item.link !== "#") tile.href = item.link;
-            
             tile.className = `tile ${item.implemented ? 'implemented' : 'unimplemented'}`;
-            
             let bgStyle = item.bg ? `style="background-image: url('${item.bg}')"` : '';
-            
             tile.innerHTML = `
                 <div class="tile-bg" ${bgStyle}></div>
                 <div class="status-dot"></div>
@@ -209,7 +199,6 @@
                     <p>${item.desc}</p>
                 </div>
             `;
-
             grid.appendChild(tile);
         });
     </script>
