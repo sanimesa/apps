@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Semi Equipment Analysis</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Inter', sans-serif; background: #020617; color: #f8fafc; margin: 0; padding: 2rem; }
+        .container { max-width: 1000px; margin: 0 auto; }
+        header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 2rem; }
+        .back-btn { color: #38bdf8; text-decoration: none; font-size: 0.9rem; }
+        .chart-container { background: #1e293b; padding: 2rem; border-radius: 12px; border: 1px solid #334155; height: 600px; }
+        h1 { margin: 0; font-size: 1.5rem; color: #38bdf8; }
+        .legend { margin-top: 1rem; font-size: 0.8rem; color: #94a3b8; text-align: center; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Semiconductor Equipment Mosaic</h1>
+            <a href="../" class="back-btn">← Back to Mosaic</a>
+        </header>
+
+        <div class="chart-container">
+            <canvas id="bubbleChart"></canvas>
+        </div>
+        <p class="legend">X-Axis: 1Y Return (%) | Y-Axis: Growth Rate (%) | Bubble Size: Market Cap</p>
+    </div>
+
+    <script>
+        const ctx = document.getElementById('bubbleChart').getContext('2d');
+        
+        // Data estimates for Semi Equipment players (Early 2026)
+        // x: 1Y Return, y: Growth Rate, r: Market Cap (scaled for visual)
+        const semiData = [
+            { label: 'ASML', data: [{ x: 15, y: 18, r: 45 }], backgroundColor: '#6366f1' },
+            { label: 'AMAT', data: [{ x: 22, y: 12, r: 35 }], backgroundColor: '#38bdf8' },
+            { label: 'LRCX', data: [{ x: 18, y: 14, r: 30 }], backgroundColor: '#10b981' },
+            { label: 'KLAC', data: [{ x: 25, y: 15, r: 28 }], backgroundColor: '#f59e0b' },
+            { label: 'TER', data: [{ x: 8, y: 10, r: 15 }], backgroundColor: '#ef4444' },
+            { label: 'ONTO', data: [{ x: 35, y: 22, r: 12 }], backgroundColor: '#ec4899' },
+            { label: 'ACLS', data: [{ x: -5, y: 8, r: 8 }], backgroundColor: '#64748b' },
+            { label: 'CAMT', data: [{ x: 45, y: 25, r: 10 }], backgroundColor: '#8b5cf6' },
+            { label: 'NVMI', data: [{ x: 30, y: 20, r: 11 }], backgroundColor: '#06b6d4' },
+            { label: 'ENTG', data: [{ x: 12, y: 9, r: 18 }], backgroundColor: '#f97316' }
+        ];
+
+        new Chart(ctx, {
+            type: 'bubble',
+            data: { datasets: semiData },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: { 
+                        title: { display: true, text: '1 Year Return (%)', color: '#94a3b8' },
+                        grid: { color: '#334155' },
+                        ticks: { color: '#94a3b8' }
+                    },
+                    y: { 
+                        title: { display: true, text: 'Growth Rate (%)', color: '#94a3b8' },
+                        grid: { color: '#334155' },
+                        ticks: { color: '#94a3b8' }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return context.dataset.label + ': Return ' + context.raw.x + '%, Growth ' + context.raw.y + '%';
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>
