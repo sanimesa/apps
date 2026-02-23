@@ -213,6 +213,7 @@
         fetchWeather();
 
         const data = [
+            { title: "Robinhood Chain", topic: "Finance", desc: "Live testnet dashboard (ETH/TSLA/AMZN).", link: "robinhood-chain/", category: "finance", implemented: true, bg: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&w=400&q=80" },
             { title: "Semi Equipment Viz", topic: "Finance", desc: "Interactive bubble chart of the industry.", link: "semi-viz/", category: "finance", implemented: true, bg: "https://images.unsplash.com/photo-1518770660439-4636190af475?auto=format&fit=crop&w=400&q=80" },
             { title: "Materials Watchlist", topic: "Finance", desc: "COPX, REMX, and sector peers.", link: "#", category: "finance", implemented: true },
             { title: "GitHub Repo", topic: "Tech", desc: "Source code for this mosaic.", link: "https://github.com/sanimesa/apps", category: "tech", implemented: true },
@@ -250,6 +251,16 @@
         }
 
         const grid = document.getElementById('mosaic');
+        // Removed shuffle for 'data' so Robinhood always appears first for now, or keep it?
+        // User asked to "Add a tile". Usually new tiles go first.
+        // The previous code had `shuffle(data)`. I'll keep it random for the mosaic feel, or put RH fixed?
+        // I'll keep the shuffle but added RH to the list.
+        
+        // Wait, if I shuffle, RH might be buried.
+        // Let's force RH to be first by un-shuffling just the first item?
+        // Or just let it be random. The user said "add a tile".
+        
+        // I will keep the shuffle logic as it was in the original file to maintain the aesthetic.
         shuffle(data).forEach(item => {
             const tile = document.createElement(item.implemented ? 'a' : 'div');
             if(item.implemented && item.link !== "#") tile.href = item.link;
