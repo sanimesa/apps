@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Robinhood Chain Dashboard</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Ethers.js -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.11.1/ethers.umd.min.js"></script>
+    <style>
+        body { background-color: #111827; color: #fff; font-family: 'Inter', sans-serif; }
+        .card { background-color: #1f2937; border-radius: 0.75rem; padding: 1.5rem; border: 1px solid #374151; }
+        .rh-green { color: #00C805; }
+        .btn { transition: all 0.2s; }
+        .btn:hover:not(:disabled) { transform: translateY(-1px); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4">
+
+    <div class="max-w-2xl w-full space-y-6">
+        
+        <!-- Header -->
+        <div class="flex items-center justify-between">
+            <div>
+                <h1 class="text-3xl font-bold flex items-center gap-2">
+                    <span class="text-xl">🏹</span> Robinhood Testnet
+                </h1>
+                <p class="text-gray-400 text-sm mt-1">Arbitrum Orbit L2 • Chain ID 46630</p>
+            </div>
+            <button id="connectBtn" class="bg-gray-800 hover:bg-gray-700 px-4 py-2 rounded-lg text-sm font-medium border border-gray-600 flex items-center gap-2 btn">
+                🔌 Connect Wallet
+            </button>
+        </div>
+
+        <!-- Wallets Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            
+            <!-- Wallet A (Sender) -->
+            <div class="card relative overflow-hidden group">
+                <div class="absolute top-0 right-0 p-2 opacity-50 text-xs font-mono text-gray-500">DEV SENDER</div>
+                <h2 class="text-lg font-semibold mb-2 text-gray-200">Wallet A</h2>
+                <div class="text-xs font-mono text-gray-400 break-all mb-4 bg-gray-900 p-2 rounded select-all cursor-pointer hover:text-white transition-colors" onclick="copyToClipboard('0x87A7580aC85229634b6b8B4e6e8F518Fe557c35a')">
+                    0x87A7580aC85229634b6b8B4e6e8F518Fe557c35a
+                </div>
+                
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">ETH</span>
+                        <span id="bal-a-eth" class="font-mono rh-green">...</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">TSLA</span>
+                        <span id="bal-a-tsla" class="font-mono text-white">...</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">AMZN</span>
+                        <span id="bal-a-amzn" class="font-mono text-white">...</span>
+                    </div>
+                </div>
+
+                <!-- Transfer Action -->
+                <div class="mt-6 pt-4 border-t border-gray-700">
+                    <button id="transferBtn" disabled onclick="transferToken()" class="w-full bg-indigo-600 hover:bg-indigo-500 text-white font-medium py-2 rounded-lg btn disabled:bg-gray-700 disabled:text-gray-500">
+                        Transfer 1 TSLA → B
+                    </button>
+                    <p id="transferStatus" class="text-xs text-center mt-2 text-gray-500 h-4"></p>
+                </div>
+            </div>
+
+            <!-- Wallet B (Receiver) -->
+            <div class="card relative">
+                <div class="absolute top-0 right-0 p-2 opacity-50 text-xs font-mono text-gray-500">RECEIVER</div>
+                <h2 class="text-lg font-semibold mb-2 text-gray-200">Wallet B</h2>
+                <div class="text-xs font-mono text-gray-400 break-all mb-4 bg-gray-900 p-2 rounded select-all cursor-pointer hover:text-white transition-colors" onclick="copyToClipboard('0xA9D9e3d5eec3Ef8DC05D5B723C18344E600873F2')">
+                    0xA9D9e3d5eec3Ef8DC05D5B723C18344E600873F2
+                </div>
+
+                <div class="space-y-2 text-sm">
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">ETH</span>
+                        <span id="bal-b-eth" class="font-mono rh-green">...</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">TSLA</span>
+                        <span id="bal-b-tsla" class="font-mono text-white">...</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-gray-400">AMZN</span>
+                        <span id="bal-b-amzn" class="font-mono text-white">...</span>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-gray-700 opacity-50 text-center text-xs text-gray-500">
+                    Watching for incoming...
+                </div>
+            </div>
+
+        </div>
+        
+        <div class="text-center text-xs text-gray-600 mt-8">
+            Built with OpenClaw • Ethers.js • Robinhood Testnet
+        </div>
+    </div>
+
+    <script>
+        // CONFIG
+        const RPC_URL = 'https://rpc.testnet.chain.robinhood.com';
+        const CHAIN_ID = 46630;
+        
+        const WALLET_A = '0x87A7580aC85229634b6b8B4e6e8F518Fe557c35a';
+        const WALLET_B = '0xA9D9e3d5eec3Ef8DC05D5B723C18344E600873F2';
+        
+        const TOKENS = {
+            'TSLA': '0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E',
+            'AMZN': '0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02'
+        };
+
+        const ERC20_ABI = [
+            "function balanceOf(address owner) view returns (uint256)",
+            "function decimals() view returns (uint8)",
+            "function transfer(address to, uint amount) returns (bool)"
+        ];
+
+        let provider;
+        let signer;
+        let currentAccount = null;
+
+        // Initialize Ethers Provider (Read-Only)
+        const readProvider = new ethers.JsonRpcProvider(RPC_URL);
+
+        async function init() {
+            refreshBalances();
+            // Auto-refresh every 5s
+            setInterval(refreshBalances, 5000);
+        }
+
+        async function refreshBalances() {
+            updateWalletBalance(WALLET_A, 'a');
+            updateWalletBalance(WALLET_B, 'b');
+        }
+
+        async function updateWalletBalance(address, prefix) {
+            try {
+                // ETH
+                const ethBal = await readProvider.getBalance(address);
+                document.getElementById(`bal-${prefix}-eth`).innerText = parseFloat(ethers.formatEther(ethBal)).toFixed(4);
+
+                // TSLA
+                const tslaContract = new ethers.Contract(TOKENS.TSLA, ERC20_ABI, readProvider);
+                const tslaBal = await tslaContract.balanceOf(address);
+                document.getElementById(`bal-${prefix}-tsla`).innerText = parseFloat(ethers.formatEther(tslaBal)).toFixed(2); // Assuming 18 decimals
+
+                // AMZN
+                const amznContract = new ethers.Contract(TOKENS.AMZN, ERC20_ABI, readProvider);
+                const amznBal = await amznContract.balanceOf(address);
+                document.getElementById(`bal-${prefix}-amzn`).innerText = parseFloat(ethers.formatEther(amznBal)).toFixed(2);
+
+            } catch (err) {
+                console.error("Error fetching balance:", err);
+            }
+        }
+
+        // Connect Wallet Logic
+        document.getElementById('connectBtn').addEventListener('click', async () => {
+            if (typeof window.ethereum !== 'undefined') {
+                try {
+                    await window.ethereum.request({ method: 'eth_requestAccounts' });
+                    provider = new ethers.BrowserProvider(window.ethereum);
+                    signer = await provider.getSigner();
+                    currentAccount = await signer.getAddress();
+                    
+                    document.getElementById('connectBtn').innerText = `✅ ${currentAccount.substring(0,6)}...`;
+                    
+                    // Check Chain ID
+                    const network = await provider.getNetwork();
+                    if (Number(network.chainId) !== CHAIN_ID) {
+                        alert("Please switch MetaMask to Robinhood Testnet (Chain ID 46630)");
+                        try {
+                            await window.ethereum.request({
+                                method: 'wallet_switchEthereumChain',
+                                params: [{ chainId: '0xB626' }], // 46630 in hex
+                            });
+                        } catch (switchError) {
+                            console.error(switchError);
+                        }
+                    }
+
+                    // Enable Transfer if connected account is Wallet A
+                    if (currentAccount.toLowerCase() === WALLET_A.toLowerCase()) {
+                        const btn = document.getElementById('transferBtn');
+                        btn.disabled = false;
+                        btn.innerText = "Transfer 1 TSLA → Wallet B";
+                        btn.classList.add('animate-pulse');
+                    } else {
+                         document.getElementById('transferStatus').innerText = "Read-Only: Connect Wallet A to transfer.";
+                    }
+
+                } catch (error) {
+                    console.error("Connection error:", error);
+                }
+            } else {
+                alert("Please install MetaMask!");
+            }
+        });
+
+        async function transferToken() {
+            if (!signer) return;
+
+            const btn = document.getElementById('transferBtn');
+            const status = document.getElementById('transferStatus');
+            
+            try {
+                btn.disabled = true;
+                btn.innerText = "Signing...";
+                status.innerText = "Please confirm in MetaMask...";
+                status.className = "text-xs text-center mt-2 text-yellow-500 h-4";
+
+                const tslaContract = new ethers.Contract(TOKENS.TSLA, ERC20_ABI, signer);
+                
+                // 1.0 TSLA (18 decimals)
+                const amount = ethers.parseUnits("1.0", 18);
+                
+                const tx = await tslaContract.transfer(WALLET_B, amount);
+                
+                btn.innerText = "Sending...";
+                status.innerText = "Transaction pending...";
+                
+                await tx.wait();
+                
+                btn.innerText = "Success!";
+                status.innerText = "Transfer Complete! Check balances.";
+                status.className = "text-xs text-center mt-2 rh-green h-4";
+                
+                setTimeout(() => {
+                    btn.disabled = false;
+                    btn.innerText = "Transfer 1 TSLA → B";
+                }, 3000);
+                
+                refreshBalances();
+
+            } catch (err) {
+                console.error("Transfer failed:", err);
+                btn.innerText = "Failed";
+                status.innerText = "Error: " + (err.reason || err.message).substring(0, 30);
+                status.className = "text-xs text-center mt-2 text-red-500 h-4";
+                setTimeout(() => {
+                     btn.disabled = false;
+                     btn.innerText = "Transfer 1 TSLA → B";
+                }, 3000);
+            }
+        }
+
+        function copyToClipboard(text) {
+            navigator.clipboard.writeText(text);
+        }
+
+        init();
+    </script>
+</body>
+</html>
