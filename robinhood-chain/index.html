@@ -8,6 +8,9 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Ethers.js -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/ethers/6.11.1/ethers.umd.min.js"></script>
+    <!-- Favicon (Robinhood Feather / Bow Concept) -->
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🏹</text></svg>">
+
     <style>
         body { background-color: #111827; color: #fff; font-family: 'Inter', sans-serif; }
         .card { background-color: #1f2937; border-radius: 0.75rem; padding: 1.5rem; border: 1px solid #374151; }
@@ -15,11 +18,12 @@
         .btn { transition: all 0.2s; }
         .btn:hover:not(:disabled) { transform: translateY(-1px); }
         .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .token-row { display: flex; justify-content: space-between; align-items: center; padding-top: 4px; padding-bottom: 4px;}
     </style>
 </head>
 <body class="min-h-screen flex items-center justify-center p-4">
 
-    <div class="max-w-2xl w-full space-y-6">
+    <div class="max-w-4xl w-full space-y-6">
         
         <!-- Header -->
         <div class="flex items-center justify-between">
@@ -45,19 +49,9 @@
                     0x87A7580aC85229634b6b8B4e6e8F518Fe557c35a
                 </div>
                 
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-400">ETH</span>
-                        <span id="bal-a-eth" class="font-mono rh-green">...</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-400">TSLA</span>
-                        <span id="bal-a-tsla" class="font-mono text-white">...</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-400">AMZN</span>
-                        <span id="bal-a-amzn" class="font-mono text-white">...</span>
-                    </div>
+                <div class="space-y-1 text-sm" id="wallet-a-tokens">
+                    <!-- Tokens injected here -->
+                    <div class="token-row"><span class="text-gray-400">ETH</span><span id="bal-a-eth" class="font-mono rh-green">...</span></div>
                 </div>
 
                 <!-- Transfer Action -->
@@ -77,19 +71,9 @@
                     0xA9D9e3d5eec3Ef8DC05D5B723C18344E600873F2
                 </div>
 
-                <div class="space-y-2 text-sm">
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-400">ETH</span>
-                        <span id="bal-b-eth" class="font-mono rh-green">...</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-400">TSLA</span>
-                        <span id="bal-b-tsla" class="font-mono text-white">...</span>
-                    </div>
-                    <div class="flex justify-between items-center">
-                        <span class="text-gray-400">AMZN</span>
-                        <span id="bal-b-amzn" class="font-mono text-white">...</span>
-                    </div>
+                <div class="space-y-1 text-sm" id="wallet-b-tokens">
+                     <!-- Tokens injected here -->
+                     <div class="token-row"><span class="text-gray-400">ETH</span><span id="bal-b-eth" class="font-mono rh-green">...</span></div>
                 </div>
                 
                 <div class="mt-6 pt-4 border-t border-gray-700 opacity-50 text-center text-xs text-gray-500">
@@ -114,7 +98,10 @@
         
         const TOKENS = {
             'TSLA': '0xC9f9c86933092BbbfFF3CCb4b105A4A94bf3Bd4E',
-            'AMZN': '0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02'
+            'AMZN': '0x5884aD2f920c162CFBbACc88C9C51AA75eC09E02',
+            'PLTR': '0x1FBE1a0e43594b3455993B5dE5Fd0A7A266298d0',
+            'NFLX': '0x3b8262A63d25f0477c4DDE23F83cfe22Cb768C93',
+            'AMD':  '0x71178BAc73cBeb415514eB542a8995b82669778d'
         };
 
         const ERC20_ABI = [
@@ -130,7 +117,31 @@
         // Initialize Ethers Provider (Read-Only)
         const readProvider = new ethers.JsonRpcProvider(RPC_URL);
 
+        function renderTokenRows() {
+            const containerA = document.getElementById('wallet-a-tokens');
+            const containerB = document.getElementById('wallet-b-tokens');
+            
+            // Clear existing except ETH
+            // Actually easier to just re-render all including ETH placeholder if needed, 
+            // but let's append tokens
+            
+            Object.keys(TOKENS).forEach(symbol => {
+                // Wallet A
+                const rowA = document.createElement('div');
+                rowA.className = 'token-row';
+                rowA.innerHTML = `<span class="text-gray-400">${symbol}</span><span id="bal-a-${symbol}" class="font-mono text-white">...</span>`;
+                containerA.appendChild(rowA);
+
+                // Wallet B
+                const rowB = document.createElement('div');
+                rowB.className = 'token-row';
+                rowB.innerHTML = `<span class="text-gray-400">${symbol}</span><span id="bal-b-${symbol}" class="font-mono text-white">...</span>`;
+                containerB.appendChild(rowB);
+            });
+        }
+
         async function init() {
+            renderTokenRows();
             refreshBalances();
             // Auto-refresh every 5s
             setInterval(refreshBalances, 5000);
@@ -147,15 +158,17 @@
                 const ethBal = await readProvider.getBalance(address);
                 document.getElementById(`bal-${prefix}-eth`).innerText = parseFloat(ethers.formatEther(ethBal)).toFixed(4);
 
-                // TSLA
-                const tslaContract = new ethers.Contract(TOKENS.TSLA, ERC20_ABI, readProvider);
-                const tslaBal = await tslaContract.balanceOf(address);
-                document.getElementById(`bal-${prefix}-tsla`).innerText = parseFloat(ethers.formatEther(tslaBal)).toFixed(2); // Assuming 18 decimals
-
-                // AMZN
-                const amznContract = new ethers.Contract(TOKENS.AMZN, ERC20_ABI, readProvider);
-                const amznBal = await amznContract.balanceOf(address);
-                document.getElementById(`bal-${prefix}-amzn`).innerText = parseFloat(ethers.formatEther(amznBal)).toFixed(2);
+                // Tokens
+                for (const [symbol, contractAddress] of Object.entries(TOKENS)) {
+                    try {
+                        const contract = new ethers.Contract(contractAddress, ERC20_ABI, readProvider);
+                        const bal = await contract.balanceOf(address);
+                        const el = document.getElementById(`bal-${prefix}-${symbol}`);
+                        if(el) el.innerText = parseFloat(ethers.formatEther(bal)).toFixed(2);
+                    } catch (e) {
+                        console.warn(`Failed to fetch ${symbol}`, e);
+                    }
+                }
 
             } catch (err) {
                 console.error("Error fetching balance:", err);
